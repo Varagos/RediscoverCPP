@@ -68,10 +68,16 @@ public:
     token = strtok(msg, delim);
 
     char *command = strtok(NULL, delim);
-    if (strcmp(command, "ECHO") == 0)
+
+    if (strcmp(command, "echo") == 0)
     {
-      char *data_type_token = strtok(NULL, delim);
-      return data_type_token;
+      char *message = strtok(NULL, delim); // Get the message to echo
+      if (message == nullptr)
+      {
+        throw runtime_error("Invalid ECHO command format: Message not found.");
+      }
+      // Properly format the echo message as a bulk string
+      return "+" + string(message) + "\r\n";
     }
     if (strcmp(command, "ping") == 0)
     {
