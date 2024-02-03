@@ -5,6 +5,8 @@
     "*.hs": "haskell",
     "*.proto": "proto3",
     "cstdlib": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "ostream": "cpp",
+    "string": "cpp"
   }
 }

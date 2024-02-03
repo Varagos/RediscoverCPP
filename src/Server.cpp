@@ -12,10 +12,75 @@
 
 using namespace std;
 
+int MAX_CLIENTS = 10;
+
+class RESP_PROTOCOL
+{
+  // A client sends an array of string, containing the command and its arguments
+  // The server's reply type is command-specific
+  /**
+   * CRLF: Carriage Return and Line Feed (\r\n)
+   * Basic Data Types:
+   * - strings: These start with a "+" character, followed by the string value and a CRLF terminator.
+   * - Errors: These start with a "-" character, followed by the error message and a CRLF terminator.
+   * - Integers: These start with a ":" character, followed by the integer value and a CRLF terminator.
+   * - Bulk strings: These start with a "$" character, followed by the length of the string, a CRLF terminator, the string value and a CRLF terminator.
+   *    $<length>\r\n<data>\r\n
+   * - Arrays: These start with a "*" character, followed by the number of elements in the array, a CRLF terminator, the elements of the array and a CRLF terminator.
+   *
+   * Handling Commands:
+   * - A client sends the server an *array* consisting of only bulk strings.
+   * - The server replies to clients, sending any valid RESP data type as a response.
+   */
+public:
+  static string encode(string message)
+  {
+    return "+" + message + "\r\n";
+  }
+  static string decode(string message)
+  {
+    return message.substr(1, message.length() - 3);
+  }
+
+  static bool command_is_echo(string resp_msg)
+  {
+    return resp_msg == "ECHO";
+  }
+
+  static string parse_command_msg(char msg[])
+  {
+    int len = strlen(msg);
+    char *p = msg;
+
+    // First character should be '*'
+    if (*p != '*')
+    {
+      cerr << "Invalid message format\n"
+           << endl;
+
+      throw runtime_error("Invalid message format");
+    }
+    const char delim[4] = "\r\n";
+    char *token;
+    // Split at all \r\n
+    // Get the first token
+    token = strtok(p, delim);
+
+    char *command = strtok(NULL, delim);
+    if (strcmp(command, "ECHO") == 0)
+    {
+      char *data_type_token = strtok(NULL, delim);
+      return data_type_token;
+    }
+    cerr << "Invalid command\n";
+    throw runtime_error("Invalid message format");
+  }
+};
+
 void handle_client(int client_fd)
 {
   int max_times = 1000;
-  char response[] = "+PONG\r\n";
+  char response[] = "+PONG2\r\n";
   // while client is connected
   while (1)
   {
@@ -23,19 +88,32 @@ void handle_client(int client_fd)
 
     char buffer[1024] = {0};
     size_t msg_length = recv(client_fd, buffer, 1024, 0);
-    if (msg_length <= 0)
+    if (msg_length == 0)
     {
-      cout << "Client disconnected or recv error\n";
+      cout << "Client disconnected\n"
+           << endl;
       break;
     }
-    cout << "Received: " << buffer << "\n";
+    else if (msg_length < 0)
+    {
+      // Client may have forcefully closed the connection, without the normal TCP shutdown sequence
+      cerr << "Failed to receive msg\n"
+           << endl;
+      break;
+    }
+    cout << "Received: " << buffer << "\n"
+         << endl;
 
-    if (send(client_fd, response, strlen(response), 0) < 0)
+    string resp_msg = RESP_PROTOCOL::parse_command_msg(buffer);
+
+    if (send(client_fd, resp_msg.c_str(), resp_msg.size(), 0) < 0)
     {
-      cerr << "Failed to send PONG msg\n";
+      cerr << "Failed to send PONG msg\n"
+           << endl;
       break;
     }
-    cout << "Sent PONG msg\n";
+    cout << "Sent PONG msg\n"
+         << endl;
   }
   close(client_fd);
 }
@@ -90,17 +168,20 @@ int main(int argc, char **argv)
   vector<thread> threads;
   int max_clients = 10;
   // Accept many clients
-  while (1)
+  int clients = 0;
+  while (clients < max_clients)
   {
+    cout << "Inserted while loop"
+         << endl;
     // Blocks until a client connects to the server
     int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-    cout << "Client connected\n";
 
     if (client_fd < 0)
     {
       cerr << "Failed to accept client connection\n";
       return 1;
     }
+    clients++;
 
     thread th1(handle_client, client_fd);
     th1.detach();
