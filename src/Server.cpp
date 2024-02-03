@@ -67,6 +67,12 @@ int main(int argc, char **argv)
 
   char response[] = "+PONG\r\n";
   send(client_fd, response, strlen(response), 0);
+  std::cout << "Sent PONG msg\n";
+
+  char buffer[1024] = {0};
+  size_t msg_length = recv(client_fd, buffer, 1024, 0);
+  std::cout << "Received: " << buffer << "\n";
+
   //
   // close(server_fd);
   while (1)
