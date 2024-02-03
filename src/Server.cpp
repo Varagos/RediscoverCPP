@@ -63,6 +63,10 @@ int main(int argc, char **argv)
   send(server_fd, response, strlen(response), 0);
   //
   // close(server_fd);
+  while (1)
+  {
+    // keep alive
+  }
 
   return 0;
 }
