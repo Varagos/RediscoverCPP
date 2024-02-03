@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <thread>
+#include <vector>
 
 using namespace std;
 
@@ -75,6 +76,7 @@ int main(int argc, char **argv)
   // //
   cout << "Waiting for a client to connect...\n";
 
+  vector<thread> threads;
   // Accept many clients
   while (1)
   {
@@ -88,7 +90,12 @@ int main(int argc, char **argv)
       return 1;
     }
 
-    thread th1(handle_client, client_fd);
+    thread th = thread(handle_client, client_fd);
+    threads.push_back(th);
+  }
+  for (auto &th : threads)
+  {
+    th.join();
   }
 
   close(server_fd);
