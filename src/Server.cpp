@@ -73,7 +73,7 @@ public:
       char *data_type_token = strtok(NULL, delim);
       return data_type_token;
     }
-    if (strcmp(command, "PING") == 0)
+    if (strcmp(command, "ping") == 0)
     {
       return "+PONG\r\n";
     }
@@ -85,7 +85,7 @@ public:
 void handle_client(int client_fd)
 {
   int max_times = 1000;
-  char response[] = "+PONG2\r\n";
+  char response[] = "+PONG\r\n";
   // while client is connected
   while (1)
   {
