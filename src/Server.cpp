@@ -14,7 +14,7 @@ using namespace std;
 
 void handle_client(int client_fd)
 {
-  int max_times = 10;
+  int max_times = 1000;
   char response[] = "+PONG\r\n";
   // while client is connected
   while (max_times-- > 0)
