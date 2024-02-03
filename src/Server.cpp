@@ -90,12 +90,8 @@ int main(int argc, char **argv)
       return 1;
     }
 
-    thread th = thread(handle_client, client_fd);
-    threads.push_back(th);
-  }
-  for (auto &th : threads)
-  {
-    th.join();
+    thread th1(handle_client, client_fd);
+    th1.detach();
   }
 
   close(server_fd);
