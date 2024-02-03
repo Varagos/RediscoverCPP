@@ -5,3 +5,9 @@ set(CMAKE_CXX_STANDARD 20) # Enable the C++20 standard
 set(SOURCE_FILES src/Server.cpp)
 
 add_executable(server ${SOURCE_FILES})
+
+# Find the Threads package (this will set the necessary variables for pthreads)
+find_package(Threads REQUIRED)
+
+# Link the Threads library (pthread) to the executable
+target_link_libraries(server PRIVATE Threads::Threads)
