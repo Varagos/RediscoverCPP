@@ -50,6 +50,7 @@ public:
   static string parse_command_msg(char msg[])
   {
 
+    cout << "Parsing command msg:" << msg << endl;
     // First character should be '*'
     if (*msg != '*')
     {
