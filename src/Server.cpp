@@ -65,20 +65,20 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  char response[] = "+PONG\r\n";
-  send(client_fd, response, strlen(response), 0);
-  std::cout << "Sent PONG msg\n";
-
-  char buffer[1024] = {0};
-  size_t msg_length = recv(client_fd, buffer, 1024, 0);
-  std::cout << "Received: " << buffer << "\n";
-
   //
-  // close(server_fd);
+  char response[] = "+PONG\r\n";
   while (1)
   {
     // keep alive
+
+    char buffer[1024] = {0};
+    size_t msg_length = recv(client_fd, buffer, 1024, 0);
+    std::cout << "Received: " << buffer << "\n";
+
+    send(client_fd, response, strlen(response), 0);
+    std::cout << "Sent PONG msg\n";
   }
 
+  close(server_fd);
   return 0;
 }
