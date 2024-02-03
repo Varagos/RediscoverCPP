@@ -43,21 +43,28 @@ int main(int argc, char **argv)
     return 1;
   }
   //
-  // int connection_backlog = 5;
-  // if (listen(server_fd, connection_backlog) != 0) {
-  //   std::cerr << "listen failed\n";
-  //   return 1;
-  // }
-  //
-  // struct sockaddr_in client_addr;
-  // int client_addr_len = sizeof(client_addr);
+  int connection_backlog = 5;
+  if (listen(server_fd, connection_backlog) != 0)
+  {
+    std::cerr << "listen failed\n";
+    return 1;
+  }
+
+  struct sockaddr_in client_addr;
+  int client_addr_len = sizeof(client_addr);
   // //
-  // std::cout << "Waiting for a client to connect...\n";
+  std::cout << "Waiting for a client to connect...\n";
   // //
-  // accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-  // std::cout << "Client connected\n";
+  accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+  std::cout << "Client connected\n";
   //
   // close(server_fd);
+  while (1)
+  {
+    // std::cout << "Waiting for a client to connect...\n";
+    // accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+    // std::cout << "Client connected\n";
+  }
 
   return 0;
 }
