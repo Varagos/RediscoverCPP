@@ -4,6 +4,7 @@
     "*.css": "css",
     "*.hs": "haskell",
     "*.proto": "proto3",
-    "cstdlib": "cpp"
+    "cstdlib": "cpp",
+    "thread": "cpp"
   }
 }
