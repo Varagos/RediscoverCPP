@@ -57,7 +57,7 @@ public:
       cerr << "Invalid message format\n"
            << endl;
 
-      throw runtime_error("Invalid message format");
+      throw runtime_error("Invalid message format:" + string(msg));
     }
     const char delim[4] = "\r\n";
     char *token;
