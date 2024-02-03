@@ -73,6 +73,10 @@ public:
       char *data_type_token = strtok(NULL, delim);
       return data_type_token;
     }
+    if (strcmp(command, "PING") == 0)
+    {
+      return "+PONG\r\n";
+    }
     cerr << "Invalid command\n";
     throw runtime_error("Invalid message format" + string(command));
   }
