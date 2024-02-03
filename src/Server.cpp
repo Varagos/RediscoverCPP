@@ -14,9 +14,10 @@ using namespace std;
 
 void handle_client(int client_fd)
 {
+  int max_times = 10;
   char response[] = "+PONG\r\n";
   // while client is connected
-  while (1)
+  while (max_times-- > 0)
   {
     // keep alive
 
@@ -27,6 +28,7 @@ void handle_client(int client_fd)
     send(client_fd, response, strlen(response), 0);
     cout << "Sent PONG msg\n";
   }
+  close(client_fd);
 }
 
 int main(int argc, char **argv)
@@ -77,8 +79,9 @@ int main(int argc, char **argv)
   cout << "Waiting for a client to connect...\n";
 
   vector<thread> threads;
+  int max_clients = 10;
   // Accept many clients
-  while (1)
+  while (max_clients-- > 0)
   {
     // Blocks until a client connects to the server
     int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
