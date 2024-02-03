@@ -49,12 +49,11 @@ public:
 
   static string parse_command_msg(char msg[])
   {
-    int len = strlen(msg);
-    char *p = msg;
 
     // First character should be '*'
-    if (*p != '*')
+    if (*msg != '*')
     {
+      cerr << "Received message" << msg << endl;
       cerr << "Invalid message format\n"
            << endl;
 
@@ -64,7 +63,7 @@ public:
     char *token;
     // Split at all \r\n
     // Get the first token
-    token = strtok(p, delim);
+    token = strtok(msg, delim);
 
     char *command = strtok(NULL, delim);
     if (strcmp(command, "ECHO") == 0)
