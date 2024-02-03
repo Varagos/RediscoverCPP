@@ -76,10 +76,6 @@ public:
     // First character should be '*'
     if (*msg != '*')
     {
-      cerr << "Received message" << msg << endl;
-      cerr << "Invalid message format\n"
-           << endl;
-
       throw runtime_error("Invalid message format:" + string(msg));
     }
     const char delim[4] = "\r\n";
