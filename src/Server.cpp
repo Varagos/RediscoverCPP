@@ -17,7 +17,7 @@ void handle_client(int client_fd)
   int max_times = 1000;
   char response[] = "+PONG\r\n";
   // while client is connected
-  while (max_times-- > 0)
+  while (max_times > 0)
   {
     // keep alive
 
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   vector<thread> threads;
   int max_clients = 10;
   // Accept many clients
-  while (max_clients-- > 0)
+  while (max_clients > 0)
   {
     // Blocks until a client connects to the server
     int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
