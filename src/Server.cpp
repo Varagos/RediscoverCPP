@@ -46,11 +46,32 @@ public:
   {
     return resp_msg == "ECHO";
   }
+  static void printMessageWithVisibleNewlines(const char *msg)
+  {
+    cout << "Parsing command msg:";
+    for (const char *p = msg; *p; ++p)
+    {
+      if (*p == '\r')
+      {
+        cout << "\\r";
+      }
+      else if (*p == '\n')
+      {
+        cout << "\\n";
+      }
+      else
+      {
+        cout << *p;
+      }
+    }
+    cout << ":END" << endl;
+  }
 
   static string parse_command_msg(char msg[])
   {
 
-    cout << "Parsing command msg:" << msg << ":END" << endl;
+    RESP_PROTOCOL::printMessageWithVisibleNewlines(msg);
+    // cout << "Parsing command msg:" << msg << ":END" << endl;
 
     // First character should be '*'
     if (*msg != '*')
