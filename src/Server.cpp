@@ -56,11 +56,17 @@ int main(int argc, char **argv)
   std::cout << "Waiting for a client to connect...\n";
 
   // Blocks until a client connects to the server
-  int client = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+  int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
   std::cout << "Client connected\n";
 
-  char response[] = "PONG";
-  send(server_fd, response, strlen(response), 0);
+  if (client_fd < 0)
+  {
+    std::cerr << "Failed to accept client connection\n";
+    return 1;
+  }
+
+  char response[] = "+PONG\r\n";
+  send(client_fd, response, strlen(response), 0);
   //
   // close(server_fd);
   while (1)
