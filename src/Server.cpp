@@ -72,7 +72,7 @@ public:
       return data_type_token;
     }
     cerr << "Invalid command\n";
-    throw runtime_error("Invalid message format");
+    throw runtime_error("Invalid message format" + string(command));
   }
 };
 
