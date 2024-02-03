@@ -100,8 +100,10 @@ public:
     {
       return "+PONG\r\n";
     }
-    cerr << "Invalid command\n";
-    throw runtime_error("Invalid message format" + string(command));
+
+    return "+PONG\r\n";
+    // cerr << "Invalid command\n";
+    // throw runtime_error("Invalid message format" + string(command));
   }
 };
 
