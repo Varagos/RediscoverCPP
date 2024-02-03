@@ -17,7 +17,7 @@ void handle_client(int client_fd)
   int max_times = 1000;
   char response[] = "+PONG\r\n";
   // while client is connected
-  while (max_times > 0)
+  while (1)
   {
     // keep alive
 
@@ -28,7 +28,7 @@ void handle_client(int client_fd)
     send(client_fd, response, strlen(response), 0);
     cout << "Sent PONG msg\n";
   }
-  close(client_fd);
+  // close(client_fd);
 }
 
 int main(int argc, char **argv)
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   vector<thread> threads;
   int max_clients = 10;
   // Accept many clients
-  while (max_clients > 0)
+  while (1)
   {
     // Blocks until a client connects to the server
     int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
@@ -97,6 +97,6 @@ int main(int argc, char **argv)
     th1.detach();
   }
 
-  close(server_fd);
+  // close(server_fd);
   return 0;
 }
