@@ -1,0 +1,9 @@
+{
+  "files.associations": {
+    "*.bl": "bitloops",
+    "*.css": "css",
+    "*.hs": "haskell",
+    "*.proto": "proto3",
+    "cstdlib": "cpp"
+  }
+}
