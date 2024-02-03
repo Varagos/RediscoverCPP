@@ -25,12 +25,12 @@ int main(int argc, char **argv)
   //
   // // Since the tester restarts your program quite often, setting REUSE_PORT
   // // ensures that we don't run into 'Address already in use' errors
-  int reuse = 1;
-  if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) < 0)
-  {
-    std::cerr << "setsockopt failed\n";
-    return 1;
-  }
+  // int reuse = 1;
+  // if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) < 0)
+  // {
+  //   std::cerr << "setsockopt failed\n";
+  //   return 1;
+  // }
   //
   struct sockaddr_in server_addr;
   server_addr.sin_family = AF_INET;
@@ -49,15 +49,15 @@ int main(int argc, char **argv)
   //   return 1;
   // }
   //
-  struct sockaddr_in client_addr;
-  int client_addr_len = sizeof(client_addr);
+  // struct sockaddr_in client_addr;
+  // int client_addr_len = sizeof(client_addr);
+  // //
+  // std::cout << "Waiting for a client to connect...\n";
+  // //
+  // accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+  // std::cout << "Client connected\n";
   //
-  std::cout << "Waiting for a client to connect...\n";
-  //
-  accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-  std::cout << "Client connected\n";
-  //
-  close(server_fd);
+  // close(server_fd);
 
   return 0;
 }
