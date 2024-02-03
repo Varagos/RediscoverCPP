@@ -23,12 +23,21 @@ void handle_client(int client_fd)
 
     char buffer[1024] = {0};
     size_t msg_length = recv(client_fd, buffer, 1024, 0);
+    if (msg_length <= 0)
+    {
+      cout << "Client disconnected or recv error\n";
+      break;
+    }
     cout << "Received: " << buffer << "\n";
 
-    send(client_fd, response, strlen(response), 0);
+    if (send(client_fd, response, strlen(response), 0) < 0)
+    {
+      cerr << "Failed to send PONG msg\n";
+      break;
+    }
     cout << "Sent PONG msg\n";
   }
-  // close(client_fd);
+  close(client_fd);
 }
 
 int main(int argc, char **argv)
