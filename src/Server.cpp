@@ -67,53 +67,62 @@ public:
     cout << ":END" << endl;
   }
 
-  static string parse_command_msg(char msg[])
+  static vector<string> tokenizeRESP(const string &msg)
   {
-
-    RESP_PROTOCOL::printMessageWithVisibleNewlines(msg);
-    // cout << "Parsing command msg:" << msg << ":END" << endl;
-
-    // First character should be '*'
-    if (*msg != '*')
+    vector<string> tokens;
+    string token;
+    for (char c : msg)
     {
-      throw runtime_error("Invalid message format:" + string(msg));
-    }
-    const char delim[] = "\r\n";
-    // Split at all \r\n
-    // Get the first token
-    char *token = strtok(msg, delim);
-    cout << "Token:" << token << endl;
-
-    char *command = strtok(NULL, delim);
-    cout << "Command:" << command << endl;
-    // Convert the command to uppercase for comparison
-    for (char *p = command; *p; ++p)
-      *p = toupper((unsigned char)*p);
-
-    if (strcmp(command, "ECHO") == 0)
-    {
-      // Get the length of the message to echo
-      char *echo_len = strtok(NULL, delim); // Skip the next '$3', the length indicator of the message
-      cout << "Echo length:" << echo_len << endl;
-
-      char *message = strtok(NULL, delim); // Get the actual message to echo
-      if (message == nullptr)
+      if (c == '\r')
       {
-        throw runtime_error("Message for echo command not found.");
+        continue;
       }
-
-      // Construct and return the RESP formatted message
-      string response = "$" + to_string(strlen(message)) + "\r\n" + string(message) + "\r\n";
-      return response;
+      if (c == '\n')
+      {
+        tokens.push_back(token);
+        token = "";
+      }
+      else
+      {
+        token += c;
+      }
     }
-    if (strcmp(command, "PING") == 0)
+    return tokens;
+  }
+
+  static string parse_command_msg(const string &msg)
+  {
+    vector<string> tokens = tokenizeRESP(msg);
+
+    // Ensure the message is correctly formatted
+    if (tokens.empty() || tokens[0][0] != '*')
+    {
+      throw runtime_error("Invalid message format: " + msg);
+    }
+    if (tokens.size() < 3)
+    {
+      throw runtime_error("Invalid message format: " + msg);
+    }
+
+    const string command = tokens[2];
+
+    // Example: Handling "PING" command
+    if (tokens.size() >= 3 && (command == "PING" || command == "ping"))
     {
       return "+PONG\r\n";
     }
 
-    // return "+PONG\r\n";
-    cerr << "Invalid command\n";
-    throw runtime_error("Invalid command detected" + string(command));
+    // Example: Handling "ECHO" command with its message
+    else if (tokens.size() >= 5 && (command == "ECHO" || command == "echo"))
+    {
+      // Assuming the ECHO message is the fifth token (after $<length> and the actual message)
+      string echoMessage = tokens[4];
+      return "$" + to_string(echoMessage.length()) + "\r\n" + echoMessage + "\r\n";
+    }
+
+    // Add more command handling as needed
+
+    throw runtime_error("Unsupported command detected: " + msg);
   }
 };
 
