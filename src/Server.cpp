@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <map>
 #include <string>
 #include <cstring>
 #include <unistd.h>
@@ -13,6 +14,8 @@
 using namespace std;
 
 int MAX_CLIENTS = 10;
+
+map<string, string> storage;
 
 class RESP_PROTOCOL
 {
@@ -104,20 +107,43 @@ public:
       throw runtime_error("Invalid message format: " + msg);
     }
 
-    const string command = tokens[2];
+    // Convert the command to lowercase for easier comparison
+    string command = tokens[2];
+    for (char &c : command)
+    {
+      c = tolower(c);
+    }
 
     // Example: Handling "PING" command
-    if (tokens.size() >= 3 && (command == "PING" || command == "ping"))
+    if (tokens.size() >= 3 && (command == "ping"))
     {
       return "+PONG\r\n";
     }
 
     // Example: Handling "ECHO" command with its message
-    else if (tokens.size() >= 5 && (command == "ECHO" || command == "echo"))
+    else if (tokens.size() >= 5 && (command == "echo"))
     {
       // Assuming the ECHO message is the fifth token (after $<length> and the actual message)
       string echoMessage = tokens[4];
       return "$" + to_string(echoMessage.length()) + "\r\n" + echoMessage + "\r\n";
+    }
+
+    // SET command
+    else if (tokens.size() >= 5 && (command == "set"))
+    {
+      string key = tokens[4];
+      string value = tokens[6];
+      storage[key] = value;
+      // return "OK"
+      return "+OK\r\n";
+    }
+    // GET command
+    else if (tokens.size() >= 3 && (command == "get"))
+    {
+      string key = tokens[4];
+      string value = storage[key];
+      // return the value
+      return "$" + to_string(value.length()) + "\r\n" + value + "\r\n";
     }
 
     // Add more command handling as needed
