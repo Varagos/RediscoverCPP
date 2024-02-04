@@ -78,32 +78,42 @@ public:
     {
       throw runtime_error("Invalid message format:" + string(msg));
     }
-    const char delim[4] = "\r\n";
-    char *token;
+    const char delim[] = "\r\n";
     // Split at all \r\n
     // Get the first token
-    token = strtok(msg, delim);
+    char *token = strtok(msg, delim);
+    cout << "Token:" << token << endl;
 
     char *command = strtok(NULL, delim);
+    cout << "Command:" << command << endl;
+    // Convert the command to uppercase for comparison
+    for (char *p = command; *p; ++p)
+      *p = toupper((unsigned char)*p);
 
-    if (strcmp(command, "echo") == 0)
+    if (strcmp(command, "ECHO") == 0)
     {
-      char *message = strtok(NULL, delim); // Get the message to echo
+      // Get the length of the message to echo
+      char *echo_len = strtok(NULL, delim); // Skip the next '$3', the length indicator of the message
+      cout << "Echo length:" << echo_len << endl;
+
+      char *message = strtok(NULL, delim); // Get the actual message to echo
       if (message == nullptr)
       {
-        throw runtime_error("Invalid ECHO command format: Message not found.");
+        throw runtime_error("Message for echo command not found.");
       }
-      // Properly format the echo message as a bulk string
-      return "+" + string(message) + "\r\n";
+
+      // Construct and return the RESP formatted message
+      string response = "$" + to_string(strlen(message)) + "\r\n" + string(message) + "\r\n";
+      return response;
     }
-    if (strcmp(command, "ping") == 0)
+    if (strcmp(command, "PING") == 0)
     {
       return "+PONG\r\n";
     }
 
-    return "+PONG\r\n";
-    // cerr << "Invalid command\n";
-    // throw runtime_error("Invalid message format" + string(command));
+    // return "+PONG\r\n";
+    cerr << "Invalid command\n";
+    throw runtime_error("Invalid command detected" + string(command));
   }
 };
 
@@ -134,7 +144,11 @@ void handle_client(int client_fd)
     cout << "Received: " << buffer << "\n"
          << endl;
 
-    string resp_msg = RESP_PROTOCOL::parse_command_msg(buffer);
+    // Using msg_length, create a new buffer with the exact size of the received message
+    char *msg = new char[msg_length + 1];
+    strncpy(msg, buffer, msg_length);
+
+    string resp_msg = RESP_PROTOCOL::parse_command_msg(msg);
 
     if (send(client_fd, resp_msg.c_str(), resp_msg.size(), 0) < 0)
     {

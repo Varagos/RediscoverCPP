@@ -9,5 +9,6 @@
     "ostream": "cpp",
     "string": "cpp",
     "stdexcept": "cpp"
-  }
+  },
+  "cmake.configureOnOpen": false
 }
