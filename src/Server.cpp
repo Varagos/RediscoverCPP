@@ -10,12 +10,19 @@
 #include <netdb.h>
 #include <thread>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 
 int MAX_CLIENTS = 10;
 
-map<string, string> storage;
+struct ValueWithExpiry
+{
+  string value;
+  chrono::steady_clock::time_point expiration_time;
+};
+
+map<string, ValueWithExpiry> storage;
 
 class RESP_PROTOCOL
 {
@@ -133,7 +140,21 @@ public:
     {
       string key = tokens[4];
       string value = tokens[6];
-      storage[key] = value;
+
+      string ex_command = tokens[8];
+      if (ex_command == "EX")
+      {
+        int expiry = stoi(tokens[10]);
+        // store the value with expiry
+        ValueWithExpiry valueObj;
+        valueObj.value = value;
+        valueObj.expiration_time = chrono::steady_clock::now() + chrono::seconds(expiry);
+        storage[key] = valueObj;
+      }
+
+      ValueWithExpiry valueObj;
+      valueObj.value = value;
+      storage[key] = valueObj;
       // return "OK"
       return "+OK\r\n";
     }
@@ -141,8 +162,18 @@ public:
     else if (tokens.size() >= 3 && (command == "get"))
     {
       string key = tokens[4];
-      string value = storage[key];
+      ValueWithExpiry valueObj = storage[key];
       // return the value
+      string value = valueObj.value;
+
+      chrono::steady_clock::time_point expiration_time = valueObj.expiration_time;
+      if (expiration_time < chrono::steady_clock::now())
+      {
+        storage.erase(key);
+        return "_\r\n";
+        // or $-1\r\n
+      }
+
       return "$" + to_string(value.length()) + "\r\n" + value + "\r\n";
     }
 
