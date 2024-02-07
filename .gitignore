@@ -47,4 +47,5 @@ _deps
 
 #Debug
 Server.dSYM
+*.dSYM/
 /build
