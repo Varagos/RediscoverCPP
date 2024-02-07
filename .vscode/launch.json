@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "(lldb) Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/server", // Make sure this points to your built executable
+      "args": [], // Any arguments your program needs
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true, // Change this based on your preference
+      "MIMode": "lldb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for lldb",
+          "text": "type summary add --no-value --python-function lldb.macosx.heap.CFString_SummaryProvider CFStringRef",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "CMake Build", // Adjust this to match your build task label
+      "miDebuggerPath": "/usr/bin/lldb"
+    }
+  ]
+}

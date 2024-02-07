@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.13)
 project(redis-starter-cpp)
 set(CMAKE_CXX_STANDARD 20) # Enable the C++20 standard
 
-set(SOURCE_FILES src/Server.cpp)
+# Include the directory where the Server.h file is located
+include_directories(src/includes)
+
+# Specify both the main.cpp and Server.cpp files as sources
+set(SOURCE_FILES src/main.cpp src/includes/Server.cpp)
 
 add_executable(server ${SOURCE_FILES})
 

@@ -32,3 +32,10 @@ Note: This section is for stages 2 and beyond.
    in `src/Server.cpp`.
 1. Commit your changes and run `git push origin master` to submit your solution
    to CodeCrafters. Test output will be streamed to your terminal.
+
+#
+
+```bash
+cd src
+g++ -o serverApp main.cpp includes/Server.cpp -I./includes -lpthread -std=c++11
+```
