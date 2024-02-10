@@ -8,7 +8,11 @@
     "thread": "cpp",
     "ostream": "cpp",
     "string": "cpp",
-    "stdexcept": "cpp"
+    "stdexcept": "cpp",
+    "vector": "cpp",
+    "optional": "cpp",
+    "__hash_table": "cpp",
+    "__tree": "cpp"
   },
   "cmake.configureOnOpen": false
 }

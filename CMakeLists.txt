@@ -6,7 +6,13 @@ set(CMAKE_CXX_STANDARD 20) # Enable the C++20 standard
 include_directories(src/includes)
 
 # Specify both the main.cpp and Server.cpp files as sources
-set(SOURCE_FILES src/main.cpp src/includes/Server.cpp)
+set(SOURCE_FILES 
+    src/main.cpp 
+    src/includes/Server.cpp 
+    src/includes/CommandHandler.cpp 
+    src/includes/RespProtocol.cpp
+    src/includes/InMemoryStorage.cpp
+)
 
 add_executable(server ${SOURCE_FILES})
 
